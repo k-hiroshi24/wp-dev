@@ -29,5 +29,7 @@
     "sass": "^1.54.4",
     "save-dev": "0.0.1-security"
   },
-  "browserslist":["defaults"]
+  "browserslist": [
+    "defaults"
+  ]
 }

@@ -29,17 +29,19 @@ function compileSass() {
 	.pipe(sass())
 	.pipe(postcss([autoprefixer(), cssSorter()]))
 	.pipe(mmq())
-	.pipe(gulp.dest("./public/assets/css/"))
+	.pipe(gulp.dest("../css/"))
 	.pipe(cleanCss())
 	.pipe(rename({
 		suffix: ".min"
 	}))
-	.pipe(gulp.dest("./public/assets/css/"))
+	.pipe(gulp.dest("../css/"))
 }
 
 function watch() {
 	gulp.watch("./src/assets/sass/**/*.scss", gulp.series(compileSass, browserReload));
 	gulp.watch("./src/assets/js/**/*.js", gulp.series(minJS, browserReload));
+	gulp.watch("./src/assets/images/common/**/*", gulp.series(copyImage, browserReload));
+	gulp.watch("./src/**/*.html", gulp.series(formatHTML, browserReload));
 }
 
 function browserInit(done) {
@@ -58,6 +60,7 @@ function browserReload(done) {
 
 function minJS() {
 	return gulp.src("./src/assets/js/**/*.js")
+	.pipe(gulp.dest("../js/"))
     .pipe(plumber({
         errorHandler:notify.onError('Error: <%= error message %>') //エラーが起きても処理を止めない
     }))
@@ -65,7 +68,7 @@ function minJS() {
 	.pipe(rename({
 		suffix: ".min"
 	}))
-	.pipe(gulp.dest("./public/assets/js/"))
+	.pipe(gulp.dest("../js/"))
 }
 
 function formatHTML() {
@@ -81,12 +84,12 @@ function formatHTML() {
 }
 
 function copyImage() {
-	return gulp.src("./src/assets/img/**/*")
+	return gulp.src("./src/assets/images/common/**/*")
     .pipe(plumber({
         errorHandler:notify.onError('Error: <%= error message %>') //エラーが起きても処理を止めない
     }))
 	//
-	.pipe(gulp.dest("./public/assets/img/"))
+	.pipe(gulp.dest("../images/common/"))
 }
 
 exports.test = test;
@@ -96,4 +99,4 @@ exports.browserInit = browserInit;
 exports.dev = gulp.parallel(browserInit, watch);
 exports.minJS = minJS;
 exports.formatHTML = formatHTML;
-exports.build = gulp.parallel(formatHTML,minJS,compileSass, copyImage);
+exports.build = gulp.parallel(minJS, compileSass, copyImage);
